@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, url_for, session
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
@@ -8,7 +8,7 @@ db = SQLAlchemy(app)
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key = True)
-    pyusername = db.Column(db.String(100), nullable = False)
+    username = db.Column(db.String(100), nullable = False)
     email = db.Column(db.String(100), nullable = False)
     password = db.Column(db.String(100), nullable = False)
 
@@ -18,31 +18,32 @@ db.create_all()
 def dashboard():
     return redirect("/Signup")
 
-@app.route("/login",methods=["POST","GET"])
+@app.route("/login/",methods=["POST","GET"])
 def login():
     if request.form == "POST":
         _email = request.form["email"]
         _password = request.form["password"]
         _user = User.query.filter_by(email = _email).one()
-        if _user.password == _password:
-            _name = _user.name
-            return redirect("/")
-        else:
-            return redirect("/login")
+        #if _user.password == _password:
+        #    session["email"] = _email
+        #return redirect(url_for("login"))
+        #else:
+            # have to define funtions to flash incorrect password message
+        #    return render_template("login.html")
     else:
-        return redirect("/login")
+        return render_template("login.html")
     
 
 
 @app.route("/Signup/", methods=["POST","GET"])
 def create_account():
-    if request.method == "GET":
-        new_user = User(username = request.form("user_name"),email = request.form['email'],password = request.form['password'])
+    if request.method == "POST":
+        new_user = User(username = request.form["user_name"],email = request.form['email'],password = request.form['password'])
         db.session.add(new_user)
         db.session.commit()
-        return redirect("/")
+        return redirect(url_for("login"))
     else:
-        return render_template("dashboard.html")
+        return render_template("signup.html")
 
 if __name__ == "__main__":
     app.run(debug = True)
