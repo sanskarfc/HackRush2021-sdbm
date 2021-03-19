@@ -3,33 +3,36 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///users.db"
+app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///event_database.db"
 db = SQLAlchemy(app)
 
 class User(db.Model):
-    id = db.Column(db.Integer, primary_key = True)
+    #id = db.Column(db.Integer, primary_key = True)
     username = db.Column(db.String(100), nullable = False)
-    email = db.Column(db.String(100), nullable = False)
+    email = db.Column(db.String(100), nullable = False, primary_key = True)
     password = db.Column(db.String(100), nullable = False)
 
 db.create_all()
 
 @app.route("/")
 def dashboard():
-    return redirect("/Signup")
+    return redirect("/login/")
 
 @app.route("/login/",methods=["POST","GET"])
 def login():
-    if request.form == "POST":
+    if request.method == "POST":
         _email = request.form["email"]
         _password = request.form["password"]
         _user = User.query.filter_by(email = _email).one()
-        #if _user.password == _password:
-        #    session["email"] = _email
-        #return redirect(url_for("login"))
-        #else:
-            # have to define funtions to flash incorrect password message
-        #    return render_template("login.html")
+        #print(_user.password)
+        #_user = event_database.query(User).filter_by(email = _email).all()
+        if _user.password == _password:
+            #session["email"] = _email
+            #return redirect(url_for("login"))
+            return render_template("createevent.html")
+        else:
+        #     have to define funtions to flash incorrect password message
+            return render_template("login.html")
     else:
         return render_template("login.html")
     
@@ -47,3 +50,4 @@ def create_account():
 
 if __name__ == "__main__":
     app.run(debug = True)
+
