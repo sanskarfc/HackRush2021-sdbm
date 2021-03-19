@@ -45,6 +45,9 @@ def create_account():
         db.session.add(new_user)
         db.session.commit()
         return redirect(url_for("login"))
+        # error -->>> same page display
+        #
+        #
     else:
         return render_template("signup.html")
 
