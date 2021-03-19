@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
 app = Flask(__name__)
+app.secret_key = "abcd"
 app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///event_database.db"
 db = SQLAlchemy(app)
 
@@ -14,8 +15,18 @@ class User(db.Model):
 
 db.create_all()
 
-@app.route("/")
+@app.route("/",methods=["POST","GET"])
 def dashboard():
+    if "email" in session:
+        email = session["email"]
+        return render_template("dashboard.html")
+    else:
+        return redirect("/login/")
+    #return redirect("/login/")
+
+@app.route("/logout/")
+def logout():
+    session.pop("email",None)
     return redirect("/login/")
 
 @app.route("/login/",methods=["POST","GET"])
@@ -27,9 +38,10 @@ def login():
         #print(_user.password)
         #_user = event_database.query(User).filter_by(email = _email).all()
         if _user.password == _password:
-            #session["email"] = _email
+            session["email"] = _email
             #return redirect(url_for("login"))
-            return render_template("createevent.html")
+            #return render_template("createevent.html")
+            return redirect("/")
         else:
         #     have to define funtions to flash incorrect password message
             return render_template("login.html")
@@ -41,13 +53,12 @@ def login():
 @app.route("/Signup/", methods=["POST","GET"])
 def create_account():
     if request.method == "POST":
-        new_user = User(username = request.form["user_name"],email = request.form['email'],password = request.form['password'])
+        new_user = User(username = request.form["user_name"],email = request.form["email"],password = request.form["password"])
+        if User.query.filter_by(email = request.form["email"]).first() != None:
+            return redirect("/Signup/")
         db.session.add(new_user)
         db.session.commit()
         return redirect(url_for("login"))
-        # error -->>> same page display
-        #
-        #
     else:
         return render_template("signup.html")
 
