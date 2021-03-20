@@ -64,14 +64,28 @@
                 <div class="row">
                 <h3 style="color: white;">Events <span class="badge bg-secondary">#</span></h3>
                 <br>
+                {% for event in events%}
                 <div class="row">
                 <div class="card">
                     <div class="card-header">
-                    <span class="badge bg-secondary">Admin</span>
+                    <span class="badge bg-secondary">#still working</span>
                     </div>
                     <div class="card-body">
-                    <h5 class="card-title">Event Name</h5>
-                    <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+                    <h5 class="card-title">{{event.ename}}</h5>
+                    <hr>
+                    <div class="card">
+                        <div class="card-body">
+                            <h4>Invite someone in event team.</h4>
+                            <form method="POST">
+                                <div class="form-floating mb-3">
+                                    <input type="email" class="form-control" id="floatingInput" placeholder="Email address" required>
+                                    <label for="floatingInput">Email address</label>
+                                </div>
+                                <a href="/send_notification/" type="button" class="btn btn-primary">Invite</a>
+                            </form>
+                        </div>
+                    </div>
+                    <br>
                     <a href="#" class="btn btn-primary">Visit</a>
                     </div>
                   </div>
@@ -79,6 +93,8 @@
                   <br>
                 </div>
                 </div>
+                <br>
+                {% endfor %}
             </div>
         </div>
         </div>
