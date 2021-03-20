@@ -26,6 +26,12 @@ class Event(db.Model):
     ename = db.Column(db.String(100), nullable = False)
     edesc = db.Column(db.String(500), nullable = True)
     eadmin = db.Column(db.String(500), nullable = False)
+
+class EventSec(db.Model):
+    id = db.Column(db.Integer, primary_key = True)
+    icode = db.Column(db.Integer, nullable = False)
+    ename = db.Column(db.String(100), nullable = False)
+    member_email = db.Column(db.String(100),nullable = False)
     
 db.create_all()
 
@@ -78,15 +84,27 @@ def create_account():
 
 @app.route("/Createevent/", methods =["POST","GET"])
 def create_event():
-    if request.method == "GET":
+    if request.method == "POST":
         eadmin = session["email"]
         icode = random.randint(100000,999999)
         new_event = Event(icode = icode,ename = request.form["event_name"],edesc = request.form["event_desc"],eadmin = eadmin)
+        new_join = EventSec(icode = icode,ename = request.form["event_name"],member_email = eadmin)
         db.session.add(new_event)
         db.session.commit()
         return redirect("/")
     else:
         return render_template("createevent.html")
+
+@app.route("/Joinevent/", methods = ["POST","GET"])
+def join_event():
+    if request.method == "POST":
+        _memail = session["email"]
+        new_join = EventSec(icode = request.form["icode"],ename = request.form["ename"],member_email = _memail)
+        db.session.add(new_join)
+        db.session.commit()
+        return redirect("/")
+    else:
+        return render_template("joinevent.html")
 
 if __name__ == "__main__":
     app.run(debug = True)

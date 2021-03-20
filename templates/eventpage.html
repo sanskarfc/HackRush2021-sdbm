@@ -30,21 +30,34 @@
     ">
                     <h1 style="text-align: center;">#event_name</h1>
                     <hr>
-                    <form method="GET">
-                        <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="floatingInput" placeholder="Event Name"
-                                required>
-                            <label for="floatingInput">Event Name</label>
+                    <div class="card">
+                        <div class="card-body">
+                            <h4>#event_name Description</h4>
+                            Description about event
                         </div>
-                        <div class="form-floating">
-                            <input type="text" class="form-control" id="floatingInputDesc"
-                                placeholder="Event Description">
-                            <label for="floatingInputDesc">Event Description</label>
+                    </div>
+                    <br>
+                    <div class="card">
+                        <div class="card-body">
+                            <h4>#event_name Team</h4>
+                            name and email ids of all team members
                         </div>
-                        <hr>
-                        <input class="btn btn-primary" type="submit" value="Create">
-
-                    </form>
+                    </div>
+                    <br>
+                    <hr>
+                    <div class="card">
+                        <div class="card-body">
+                            <h4>Invite someone in event team.</h4>
+                            <form method="POST">
+                                <div class="form-floating mb-3">
+                                    <input type="email" class="form-control" id="floatingInput" placeholder="Email address" name="email" required>
+                                    <label for="floatingInput">Email address</label>
+                                </div>
+                                <input class="btn btn-primary" type="submit" value="Invite" >
+                            </form>
+                        </div>
+                    </div>
+                    <br>
                 </div>
             </div>
             <div class="col-md-3"></div>
