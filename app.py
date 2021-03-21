@@ -1,6 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
 import random
 
 app = Flask(__name__)
@@ -43,7 +42,9 @@ def dashboard():
         events = EventSec.query.filter_by(member_email = email).all()
         #event_stats = Event.query.filter_by(icode = events)
         _notifications = Notification.query.filter_by(receiver_email = email).all()
-        return render_template("dashboard.html",user_name = user_name,events = events, notifications = _notifications)
+        n1 = Notification.query.filter_by(receiver_email = email).count()
+        n2 = EventSec.query.filter_by(member_email = email).count()
+        return render_template("dashboard.html",user_name = user_name,events = events, notifications = _notifications, n1 = n1,n2=n2)
     else:
         return redirect("/login/")
     #return redirect("/login/")
@@ -91,8 +92,14 @@ def create_event():
         icode = random.randint(100000,999999)
         new_event = Event(icode = icode,ename = request.form["event_name"],edesc = request.form["event_desc"],eadmin = eadmin)
         new_join = EventSec(icode = icode,ename = request.form["event_name"],member_email = eadmin)
+
+        entry = "Invitation "+"Event Name:"+str(request.form["event_name"])+"Code:"+str(icode)
+        remail = request.form["remail"]
+        new_notif = Notification(sender_email = eadmin,receiver_email = remail,entry = entry)
+
         db.session.add(new_event)
         db.session.add(new_join)
+        db.session.add(new_notif)
         db.session.commit()
         return redirect("/")
     else:
@@ -109,16 +116,6 @@ def join_event():
     else:
         return render_template("joinevent.html")
 
-@app.route("/send_notification/",methods=["POST","GET"])
-def send_notification():
-    _semail = session["email"]
-    _ename = Event.query.filter_by(eadmin = _semail).first()
-    entry = "Invitation "+"Event Name:"+str(_ename.ename)+" Invitation Code:"+str(_ename.icode)
-    remail = request.form["remail"]
-    new_notif = Notification(sender_email = _semail,receiver_email = remail,entry = entry)
-    db.session.add(new_notif)
-    db.session.commit()
-    return redirect("/")
 if __name__ == "__main__":
     app.run(debug = True)
 
